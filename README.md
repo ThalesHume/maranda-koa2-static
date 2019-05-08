@@ -6,6 +6,7 @@ app.ts
 ```
 import Koa from 'koa';
 import {join as PathJoin} from 'path';
+import Koa2Static from 'maranda-koa2-static';
 
 const app = new Koa();
 
