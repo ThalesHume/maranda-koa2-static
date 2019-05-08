@@ -1,0 +1,31 @@
+{
+  "name": "maranda-koa2-static",
+  "version": "1.0.0",
+  "description": "maranda kao2 static middeware",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yu87109/maranda-koa2-static.git"
+  },
+  "keywords": [
+    "maranda",
+    "koa2",
+    "static"
+  ],
+  "author": "Sunny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yu87109/maranda-koa2-static/issues"
+  },
+  "homepage": "https://github.com/yu87109/maranda-koa2-static#readme",
+  "dependencies": {
+    "@types/koa": "^2.0.48",
+    "@types/mime": "^2.0.1",
+    "@types/mz": "0.0.32",
+    "mime": "^2.4.2",
+    "mz": "^2.7.0"
+  }
+}
