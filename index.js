@@ -11,16 +11,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mime_1 = require("mime");
 const mz_1 = require("mz");
 const path_1 = require("path");
-function Koa2Static(Ops) {
+function default_1(Opts) {
     return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
         try {
             if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
                 throw `next`;
             }
-            let f = decodeURI(ctx.request.path), isStatic = false;
-            for (const op of Ops) {
-                if (f.startsWith(op.start)) {
-                    f = path_1.join(op.replace, f.replace(op.start, ''));
+            let f = decodeURI(ctx.request.path), isStatic = false, index = 'index.html';
+            for (const opt of Opts) {
+                if (f.startsWith(opt.start)) {
+                    if (opt.exclude) {
+                        opt.exclude.forEach((reg) => { if (reg.test(f)) {
+                            throw `next`;
+                        } });
+                    }
+                    f = path_1.join(opt.rootDir, f.replace(opt.start, ''));
+                    index = opt.default || index;
                     isStatic = true;
                     break;
                 }
@@ -28,7 +34,11 @@ function Koa2Static(Ops) {
             if (!isStatic) {
                 throw `next`;
             }
-            ctx.response.body = yield mz_1.fs.readFile(f);
+            let stat = mz_1.fs.statSync(f);
+            if (stat.isDirectory()) {
+                f = path_1.join(f, index);
+            }
+            ctx.body = mz_1.fs.createReadStream(f);
             ctx.response.type = mime_1.getType(f);
         }
         catch (error) {
@@ -41,4 +51,4 @@ function Koa2Static(Ops) {
         }
     });
 }
-exports.default = Koa2Static;
+exports.default = default_1;

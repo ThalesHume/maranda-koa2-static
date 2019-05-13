@@ -5,20 +5,18 @@ npm i --save maranda-koa2-static
 app.ts
 ```
 import Koa from 'koa';
-import {join as PathJoin} from 'path';
 import Koa2Static from 'maranda-koa2-static';
+import {join} from 'path';
 
 const app = new Koa();
 
-//before other router middeware,
-//if method is not 'head' or 'get' or path not in the start array,
-//this middeware will call next function, else this middeware will return direct 
-app.use(app.use(Koa2Static([
-    {start:'/aa/',replace:'D:/xx/aa/'},
-    {start:'/bb/',replace:'E:/cc/bb/'},
-    {start: '/assets/', replace: PathJoin(__dirname, '..', 'assets')},
+//strong recommond that user this middleware before other router middeware,
+//if ctx.method is not 'head' or 'get' or ctx.path not in the start array or ctx.path match the exclue array, this middeware will call next function, else this middeware will return the static file direct 
+app.use(Koa2Static([
+    {start: '/FileBank/', rootDir: 'D:/aa/FileBank'},
+    {start: '/assets/', rootDir: join(__dirname, '..', 'assets'), exclude:[/a.text$/]},
     ...
-]))}
-
+]))
+app.use(other middlewares)
 app.listen(80);
 ```

@@ -1,7 +1,8 @@
 import {ParameterizedContext} from 'koa';
-
 export interface StaticOps{
     start: string,
-    replace: string,
+    rootDir: string,
+    default?: string,
+    exclude?: RegExp[]
 }
-export default function Koa2Static(Ops:StaticOps[]):any
+export default function (Ops:StaticOps[]): (ctx:ParameterizedContext, next:()=>Promise<any>)=> any
