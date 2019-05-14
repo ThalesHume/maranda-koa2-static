@@ -1,9 +1,15 @@
-#useage
+# useage
 
-npm i --save maranda-koa2-static
+##### npm i --save maranda-koa2-static
+
+### for the complete maranda koa server case, with static, session-mysql, koabody, router
+
+### please visit https://github.com/yu87109/maranda-koa-server-example
+
+### this example is used for ts, if you are js user, if can use as almost the same, just delete the type define.
 
 app.ts
-```
+```typescript
 import Koa from 'koa';
 import Koa2Static from 'maranda-koa2-static';
 import {join} from 'path';
@@ -17,6 +23,10 @@ app.use(Koa2Static([
     {start: '/assets/', rootDir: join(__dirname, '..', 'assets'), exclude:[/a.text$/]},
     ...
 ]))
-app.use(other middlewares)
 app.listen(80);
 ```
+
+---
+
+[for more Versions, click see the changelog](./CHANGELOG.MD)
+
