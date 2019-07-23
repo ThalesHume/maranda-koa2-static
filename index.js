@@ -65,10 +65,13 @@ function koa2Static(folders, notFoundHandler, defer) {
             ;
             try {
                 yield koa_send_1.default(ctx, path, folder);
+                break;
             }
             catch (err) {
-                if (i !== folders.length - 1)
+                if (i !== folders.length - 1) {
+                    i++;
                     continue;
+                }
                 if (err.status !== 404)
                     throw err;
                 if (err.status === 404 && notFoundHandler)
