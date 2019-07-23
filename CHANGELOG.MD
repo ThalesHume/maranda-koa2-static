@@ -5,3 +5,8 @@
     2. add exclude file list opts, if the ctx.path match the exclude array, this middleware this call next
   ## V1.0.3
     modify readme
+  ## V2.0.0
+    reDesign api
+    --folders your static folder array
+    --notFoundHandler function whith first arg id ctx, when not found it will be called if you set
+    --defer if true, middlwware will be called after the other middleware

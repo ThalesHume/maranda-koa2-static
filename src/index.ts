@@ -1,39 +1,46 @@
-import {getType} from 'mime';
-import {ParameterizedContext} from 'koa';
-import {fs} from 'mz';
-import {join as PathJoin} from 'path';
+import { ParameterizedContext } from 'koa';
+import send from "koa-send";
 
-interface StaticOps{
-    start: string,
-    rootDir: string,
-    default?: string,
+interface StaticOptions extends send.SendOptions {
+    root: string
     exclude?: RegExp[]
 }
-export default function (Opts:StaticOps[]){
-    return async (ctx:ParameterizedContext, next:()=>Promise<any>) => {
-        try {
-            if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {throw `next`;}
-            let f = decodeURI(ctx.request.path), isStatic = false, index = 'index.html';
-            for (const opt of Opts) {
-                if(f.startsWith(opt.start)){
-                    if(opt.exclude){opt.exclude.forEach((reg)=>{if(reg.test(f)){throw `next`;}})}
-                    f = PathJoin(opt.rootDir, f.replace(opt.start, ''));
-                    index = opt.default || index;
-                    isStatic = true;
-                    break;
-                }
-            }
-            if (!isStatic) {throw `next`}
-            let stat = fs.statSync(f);
-            if(stat.isDirectory()){f = PathJoin(f, index)}
-            ctx.body =  fs.createReadStream(f);
-            ctx.response.type = <string>getType(f);
-        } catch (error) {
-            if (error == `next`) {
-                await next();
-            } else {
-                ctx.response.status = 404;
+type notFoundPolicy = (ctx: ParameterizedContext) => Promise<void> | void;
+export default function (folders: StaticOptions[], notFoundHandler?: notFoundPolicy, defer?: boolean) {
+    if (!Array.isArray(folders)) { throw new TypeError('arg must be array'); }
+    for (const folder of folders) {
+        if (folder.exclude && !Array.isArray(folder.exclude)) { throw new TypeError('exclude must be array'); }
+        if (!folder.root || typeof folder.root !== 'string') { throw new TypeError('folder root must be string'); }
+        if (folder.exclude) {
+            for (const reg of folder.exclude) {
+                if (!(reg instanceof RegExp)) { throw new TypeError('exclude element must be RegExp'); }
             }
         }
     }
+    if (notFoundHandler && typeof notFoundHandler !== 'function') { throw new TypeError('notFoundHandler must be function'); }
+    if (defer && typeof defer !== 'boolean') { throw new TypeError('defer must be boolean'); }
+    return async (ctx: ParameterizedContext, next: Function) => {
+        if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return next();
+        if (folders.length === 0) return next();
+        const path: string = decodeURI(ctx.request.path);
+        if (defer) await next();
+        if (defer && ctx.body != null || ctx.status !== 404) return;
+        let i: number = 0;
+        for (const folder of folders) {
+            let exclude = true;
+            if (folder.exclude && folder.exclude.length > 0) {
+                for (const reg of folder.exclude) {
+                    if (!reg.test(path)) { exclude = false; break; }
+                }
+            }
+            if (!exclude) { i++; continue };
+            try {
+                await send(ctx, path, folder);
+            } catch (err) {
+                if (i !== folders.length - 1) continue;
+                if (err.status !== 404) throw err;
+                if (err.status === 404 && notFoundHandler) await notFoundHandler(ctx);
+            }
+        }
+    };
 }
