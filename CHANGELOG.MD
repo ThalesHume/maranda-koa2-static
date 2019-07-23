@@ -10,3 +10,5 @@
     --folders your static folder array
     --notFoundHandler function whith first arg id ctx, when not found it will be called if you set
     --defer if true, middlwware will be called after the other middleware
+  ## V2.0.1
+    add generic

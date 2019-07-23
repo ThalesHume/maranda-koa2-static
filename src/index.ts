@@ -1,12 +1,12 @@
-import { ParameterizedContext } from 'koa';
+import { ParameterizedContext, Middleware } from 'koa';
 import send from "koa-send";
 
 interface StaticOptions extends send.SendOptions {
     root: string
     exclude?: RegExp[]
 }
-type notFoundPolicy = (ctx: ParameterizedContext) => Promise<void> | void;
-export default function (folders: StaticOptions[], notFoundHandler?: notFoundPolicy, defer?: boolean) {
+type notFoundPolicy<U, T> = (ctx: ParameterizedContext<U, T>) => Promise<void> | void;
+function koa2Static<U, T>(folders: StaticOptions[], notFoundHandler?: notFoundPolicy<U, T>, defer?: boolean): Middleware<U, T> {
     if (!Array.isArray(folders)) { throw new TypeError('arg must be array'); }
     for (const folder of folders) {
         if (folder.exclude && !Array.isArray(folder.exclude)) { throw new TypeError('exclude must be array'); }
@@ -19,7 +19,7 @@ export default function (folders: StaticOptions[], notFoundHandler?: notFoundPol
     }
     if (notFoundHandler && typeof notFoundHandler !== 'function') { throw new TypeError('notFoundHandler must be function'); }
     if (defer && typeof defer !== 'boolean') { throw new TypeError('defer must be boolean'); }
-    return async (ctx: ParameterizedContext, next: Function) => {
+    return async (ctx, next) => {
         if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return next();
         if (folders.length === 0) return next();
         const path: string = decodeURI(ctx.request.path);
@@ -44,3 +44,5 @@ export default function (folders: StaticOptions[], notFoundHandler?: notFoundPol
         }
     };
 }
+export default koa2Static;
+export { koa2Static }

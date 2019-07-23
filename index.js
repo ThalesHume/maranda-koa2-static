@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const koa_send_1 = __importDefault(require("koa-send"));
-function default_1(folders, notFoundHandler, defer) {
+function koa2Static(folders, notFoundHandler, defer) {
     if (!Array.isArray(folders)) {
         throw new TypeError('arg must be array');
     }
@@ -77,4 +77,5 @@ function default_1(folders, notFoundHandler, defer) {
         }
     });
 }
-exports.default = default_1;
+exports.koa2Static = koa2Static;
+exports.default = koa2Static;
