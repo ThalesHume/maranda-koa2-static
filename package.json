@@ -1,6 +1,6 @@
 {
   "name": "maranda-koa2-static",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "maranda kao2 static middeware",
   "main": "index.js",
   "scripts": {

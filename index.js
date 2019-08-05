@@ -45,7 +45,7 @@ function koa2Static(folders, notFoundHandler, defer) {
         const path = decodeURI(ctx.request.path);
         if (defer)
             yield next();
-        if (defer && ctx.body != null || ctx.status !== 404)
+        if (defer && (ctx.body || ctx.status !== 404))
             return;
         let i = 0;
         for (const folder of folders) {

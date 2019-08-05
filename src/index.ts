@@ -24,7 +24,7 @@ function koa2Static<U, T>(folders: StaticOptions[], notFoundHandler?: notFoundPo
         if (folders.length === 0) return next();
         const path: string = decodeURI(ctx.request.path);
         if (defer) await next();
-        if (defer && ctx.body != null || ctx.status !== 404) return;
+        if (defer && (ctx.body || ctx.status !== 404)) return;
         let i: number = 0;
         for (const folder of folders) {
             let exclude = true;

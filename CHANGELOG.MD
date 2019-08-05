@@ -12,3 +12,5 @@
     --defer if true, middlwware will be called after the other middleware
   ## V2.0.1
     add generic
+  ## V2.0.4
+    change the condition,( defer && ctx.body || ctx.status !== 404) TO (defer && (ctx.body || ctx.status !== 404))
