@@ -14,3 +14,5 @@
     add generic
   ## V2.0.4
     change the condition,( defer && ctx.body || ctx.status !== 404) TO (defer && (ctx.body || ctx.status !== 404))
+  ## V2.0.5
+    fix bug: when no index option and path is directory, koa-send return undefined, we thow 404 for you can handle this error;
