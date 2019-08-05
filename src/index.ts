@@ -35,7 +35,8 @@ function koa2Static<U, T>(folders: StaticOptions[], notFoundHandler?: notFoundPo
             }
             if (!exclude) { i++; continue };
             try {
-                await send(ctx, path, folder);
+                const p = await send(ctx, path, folder);
+                if (!p) throw { status: 404 };
                 break;
             } catch (err) {
                 if (i !== folders.length - 1) { i++; continue; }

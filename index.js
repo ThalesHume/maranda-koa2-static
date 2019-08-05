@@ -64,7 +64,9 @@ function koa2Static(folders, notFoundHandler, defer) {
             }
             ;
             try {
-                yield koa_send_1.default(ctx, path, folder);
+                const p = yield koa_send_1.default(ctx, path, folder);
+                if (!p)
+                    throw { status: 404 };
                 break;
             }
             catch (err) {
