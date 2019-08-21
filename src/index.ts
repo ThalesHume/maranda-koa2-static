@@ -20,7 +20,7 @@ function koa2Static<U, T>(folders: StaticOptions[], notFoundHandler?: notFoundPo
     if (notFoundHandler && typeof notFoundHandler !== 'function') { throw new TypeError('notFoundHandler must be function'); }
     if (defer && typeof defer !== 'boolean') { throw new TypeError('defer must be boolean'); }
     return async (ctx, next) => {
-        if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return next();
+        if (!['HEAD', 'GET'].includes(ctx.method)) return next();
         if (folders.length === 0) return next();
         const path: string = decodeURI(ctx.request.path);
         if (defer) await next();

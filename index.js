@@ -38,7 +38,7 @@ function koa2Static(folders, notFoundHandler, defer) {
         throw new TypeError('defer must be boolean');
     }
     return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-        if (ctx.method !== 'HEAD' && ctx.method !== 'GET')
+        if (!['HEAD', 'GET'].includes(ctx.method))
             return next();
         if (folders.length === 0)
             return next();
